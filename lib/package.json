@@ -20,7 +20,7 @@
 	"license": "ISC",
 	"description": "",
 	"dependencies": {
-		"puppeteer-stream": "^2.0.9"
+		"puppeteer-stream": "https://gitpkg.now.sh/RobinDHBW/puppeteer-stream?main"
 	},
 	"devDependencies": {
 		"@discordjs/opus": "^0.3.3",
