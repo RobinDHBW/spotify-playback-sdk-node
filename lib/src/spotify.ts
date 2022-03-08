@@ -5,26 +5,39 @@ import { EventEmitter } from "events";
 import fs from "fs";
 import { execSync } from "child_process";
 import path from "path";
+import * as os from "os";
+import * as child from "child_process";
 
 export function getChromePath() {
+	function listDrives() {
+		child.exec('wmic logicaldisk get name', (error, stdout) => {
+			return stdout.split('\r\r\n')
+				.filter(value => /[A-Za-z]:/.test(value))
+				.map(value => value.trim());
+		});
+	}
+
 	function check(path: string) {
 		try {
 			if (fs.existsSync(path)) return path;
-		} catch (error) {}
+		} catch (ex) {
+			console.error(ex);
+		}
 	}
 	try {
-		var linux = execSync("which google-chrome-stable", { encoding: "utf8" }).trim();
-	} catch (error) {}
-
-	return (
-		check("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe") ||
-		check("C:\\Program Files (x86)\\Google\\Application\\chrome.exe") ||
-		check("%AppData%\\Local\\Google\\Chrome\\Application\\chome.exe") ||
-		check("C:\\Users\\UserName\\AppDataLocal\\Google\\Chrome") ||
-		check("C:\\Documents and Settings\\UserName\\Local Settings\\Application Data\\Google\\Chrome") ||
-		check("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome") ||
-		check(linux)
-	);
+		switch (os.platform) {
+			case 'win32': {
+				for (const str in listDrives()) {
+					const path = check(execSync("where.exe /r " + str + "\ chrome.exe", { encoding: "utf8" }).trim());
+					if (check && check.length > 0) return path;
+				}
+			}
+			case "linux":
+			default: { return check(execSync("which google-chrome-stable", { encoding: "utf8" }).trim()) }
+		}
+	} catch (ex) {
+		console.error(ex);
+	}
 }
 
 export type initOptions = { executablePath?: string };
@@ -38,7 +51,7 @@ const player = `file://${path.join(__dirname, "..", "player.html")}`;
 export class SpotifyPlaybackSDK {
 	public browser: Browser;
 
-	constructor() {}
+	constructor() { }
 
 	async init(opts?: initOptions) {
 		let { executablePath } = opts || {};
