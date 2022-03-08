@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {launch, getStream} from "puppeteer-stream";
+import { launch, getStream } from "puppeteer-stream";
 import puppeteer, { Browser, Page } from "puppeteer";
 import { EventEmitter } from "events";
 import fs from "fs";
@@ -10,10 +10,10 @@ import * as child from "child_process";
 
 export function getChromePath() {
 	function listDrives() {
-        return child.execSync('wmic logicaldisk get name').toString().split('\r\r\n')
-            .filter(value => /[A-Za-z]:/.test(value))
-            .map(value => value.trim());
-    }
+		return child.execSync('wmic logicaldisk get name').toString().split('\r\r\n')
+			.filter(value => /[A-Za-z]:/.test(value))
+			.map(value => value.trim());
+	}
 
 	function check(path: string) {
 		try {
@@ -27,7 +27,7 @@ export function getChromePath() {
 			case 'win32': {
 				for (const str of listDrives()) {
 					const path = check(execSync("where.exe /r " + str + "\ chrome.exe", { encoding: "utf8" }).trim());
-					if (path && path.length > 0) return path;					
+					if (path && path.length > 0) return path;
 				}
 				break;
 			}
