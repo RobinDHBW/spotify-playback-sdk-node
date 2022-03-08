@@ -1,5 +1,5 @@
 // @ts-nocheck
-import "puppeteer-stream";
+import {launch, getStream} from "puppeteer-stream";
 import puppeteer, { Browser, Page } from "puppeteer";
 import { EventEmitter } from "events";
 import fs from "fs";
@@ -25,7 +25,7 @@ export function getChromePath() {
 	try {
 		switch (os.platform()) {
 			case 'win32': {
-				for (const str in listDrives()) {
+				for (const str of listDrives()) {
 					const path = check(execSync("where.exe /r " + str + "\ chrome.exe", { encoding: "utf8" }).trim());
 					if (path && path.length > 0) return path;					
 				}
@@ -141,7 +141,7 @@ class SpotifyPlayer extends EventEmitter {
 	}
 
 	async getAudio() {
-		return this.page.getStream({ audio: true, video: false, frameSize: 20, mimeType: "audio/webm" });
+		return await getStream(this.page, { audio: true, video: false, frameSize: 20, mimeType: "audio/webm" });
 	}
 
 	async connect(): Promise<boolean> {
