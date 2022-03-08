@@ -58,7 +58,7 @@ export class SpotifyPlaybackSDK {
 		if (!executablePath)
 			throw "Please install chrome to use the SpotifyPlayback SDK: https://www.google.com/chrome/";
 
-		this.browser = await puppeteer.launch({ executablePath });
+		this.browser = await launch({ executablePath });
 		return this;
 	}
 
