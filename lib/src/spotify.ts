@@ -10,12 +10,10 @@ import * as child from "child_process";
 
 export function getChromePath() {
 	function listDrives() {
-		child.exec('wmic logicaldisk get name', (error, stdout) => {
-			return stdout.split('\r\r\n')
-				.filter(value => /[A-Za-z]:/.test(value))
-				.map(value => value.trim());
-		});
-	}
+        return child.execSync('wmic logicaldisk get name').toString().split('\r\r\n')
+            .filter(value => /[A-Za-z]:/.test(value))
+            .map(value => value.trim());
+    }
 
 	function check(path: string) {
 		try {
@@ -25,12 +23,13 @@ export function getChromePath() {
 		}
 	}
 	try {
-		switch (os.platform) {
+		switch (os.platform()) {
 			case 'win32': {
 				for (const str in listDrives()) {
 					const path = check(execSync("where.exe /r " + str + "\ chrome.exe", { encoding: "utf8" }).trim());
-					if (check && check.length > 0) return path;
+					if (path && path.length > 0) return path;					
 				}
+				break;
 			}
 			case "linux":
 			default: { return check(execSync("which google-chrome-stable", { encoding: "utf8" }).trim()) }
